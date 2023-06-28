@@ -1,0 +1,196 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:3000/api
+tags:
+  - name: Book
+    description: API for Book
+paths:
+  /books:
+    get:
+      tags:
+        - Book
+      summary: Get List Book
+      description: Get paginate Book and filter
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Bad Request
+    post:
+      tags:
+        - Book
+      summary: Add a new Book
+      description: Add a new Book
+      requestBody:
+        description: Create a new Book
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatedBook'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '405':
+          description: Invalid input
+    put:
+      tags:
+        - Book
+      summary: Edit a new Book
+      description: Edit Book
+      requestBody:
+        description: Edit Book
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Bad Request
+  /books/{bookId}:
+    get:
+      tags:
+        - Book
+      summary: Get Book detail
+      description: Get Book detail
+      parameters:
+        - in: path
+          name: bookId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful get book detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Bad Request
+components:
+  schemas:
+    Book:
+      type: object
+      required: # List the required properties here
+        - _id
+        - title
+        - description
+        - image
+        - category
+        - quantity
+        - price
+      properties:
+        _id:
+          type: string
+          example: '649bd775de55fd6374fbc334'
+        title:
+          type: string
+          example: 'book title'
+        description:
+          type: string
+          example: 'book description'
+        image:
+          type: string
+          example: 'book image'
+        category:
+          type: string
+          example: Drama
+          enum:
+            - Comedy
+            - Sport
+        quantity:
+          type: integer
+          format: int32
+          example: 7
+        price:
+          type: integer
+          example: 100000
+        isDeleted:
+          type: boolean
+          description: Order Status
+      xml:
+        name: book
+    CreatedBook:
+      type: object
+      required: # List the required properties here
+        - title
+        - description
+        - image
+        - category
+        - quantity
+        - price
+      properties:
+        title:
+          type: string
+          example: 'book title'
+        description:
+          type: string
+          example: 'book description'
+        image:
+          type: string
+          example: 'book image'
+        category:
+          type: string
+          example: Drama
+          enum:
+            - Comedy
+            - Sport
+        quantity:
+          type: integer
+          format: int32
+          example: 7
+        price:
+          type: integer
+          example: 100000
+        isDeleted:
+          type: boolean
+          description: Order Status
+      xml:
+        name: book

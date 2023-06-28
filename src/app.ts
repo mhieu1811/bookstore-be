@@ -16,6 +16,9 @@ import {
 } from './utils/validators';
 import { checkSchema } from 'express-validator';
 import { bookQuery } from './utils/validators/bookQuery.validator';
+import swaggerUi from 'swagger-ui-express';
+import fs from 'fs';
+import YAML from 'yaml';
 
 env.config();
 
@@ -47,14 +50,15 @@ export default class App {
 
   public async start() {
     this.connection();
-    this.initialMiddleware();
-    this.initialRoute();
+    this.initMiddleware();
+    this.initSwagger();
+    this.initRoute();
     this.globalErrorHandler();
     this.app.listen(this.port, () =>
       console.log(`Server listening on http://localhost:${this.port}`),
     );
   }
-  private initialMiddleware() {
+  private initMiddleware() {
     this.app.use(cors());
     this.app.use(json());
 
@@ -62,7 +66,7 @@ export default class App {
     this.app.use(express.urlencoded({ extended: true }));
   }
 
-  private initialRoute() {
+  private initRoute() {
     const bookController = container.resolve<BookController>(BookController);
 
     // this.app.get('/api/books', bookController.getBooks.bind(bookController));
@@ -87,6 +91,16 @@ export default class App {
       '/api/books',
       checkSchema(bookQuery),
       bookController.getBookPaginate.bind(bookController),
+    );
+  }
+
+  private initSwagger() {
+    const file = fs.readFileSync('./openapi.yaml', 'utf8');
+    const swaggerDocument = YAML.parse(file);
+    this.app.use(
+      '/api-docs',
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerDocument),
     );
   }
 
