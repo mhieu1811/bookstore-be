@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Swagger Petstore - OpenAPI 3.0
+  title: Swagger BookStore - OpenAPI 3.0
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -143,6 +143,7 @@ components:
           type: string
           example: Drama
           enum:
+            - Drama
             - Comedy
             - Sport
         quantity:
@@ -180,6 +181,7 @@ components:
           type: string
           example: Drama
           enum:
+            - Drama
             - Comedy
             - Sport
         quantity:
