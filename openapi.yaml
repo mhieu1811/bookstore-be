@@ -70,30 +70,6 @@ paths:
                 $ref: '#/components/schemas/Book'
         '405':
           description: Invalid input
-    put:
-      tags:
-        - Book
-      summary: Edit a new Book
-      description: Edit Book
-      requestBody:
-        description: Edit Book
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Book'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Book'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Book'
-        '400':
-          description: Bad Request
   /books/{bookId}:
     get:
       tags:
@@ -110,6 +86,35 @@ paths:
           description: Successful get book detail
           content:
             application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Bad Request
+    put:
+      tags:
+        - Book
+      summary: Edit a new Book
+      description: Edit Book
+      parameters:
+        - in: path
+          name: bookId
+          schema:
+            type: string
+      requestBody:
+        description: Edit Book
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Book'
         '400':
