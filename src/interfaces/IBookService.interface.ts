@@ -1,16 +1,11 @@
-import {
-  FilterQuery,
-  QueryOptions,
-  SaveOptions,
-  UpdateQuery,
-  UpdateWithAggregationPipeline,
-} from 'mongoose';
 import { IBook, ICreateBook } from './IBook.interface';
+import { IBookQuery } from './IBookQuery.interface';
+import { PageModel } from './IPageModel.interface';
 
 export interface IBookService {
   getAllBooks(): Promise<IBook[]>;
   getDetail(bookId: string): Promise<IBook | null>;
   createBook(book: ICreateBook): Promise<IBook | null>;
-  editBook(book: IBook): Promise<IBook | null>;
-  checkoutBook(): string;
+  editBook(bookId: string, book: ICreateBook): Promise<IBook | null>;
+  getByPaging(bookQueryCriteria: IBookQuery): Promise<PageModel<IBook>>;
 }

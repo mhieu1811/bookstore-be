@@ -9,7 +9,6 @@ export interface IBook {
   price: number;
   description: string;
   category: Category;
-  createdDate: Date;
   isDeleted: boolean;
 }
 
@@ -20,6 +19,5 @@ export interface ICreateBook {
   price: number;
   description: string;
   category: Category;
-  createdDate: Date;
   isDeleted: boolean;
 }
