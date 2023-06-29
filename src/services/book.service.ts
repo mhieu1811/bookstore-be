@@ -42,13 +42,25 @@ export class BookService implements IBookService {
 
     const startRow = (query.page - 1) * query.limit;
 
-    const books = await Book.aggregate([bookFilter.match])
-      .skip(startRow)
-      .limit(query.limit);
+    const result = await Book.aggregate([bookFilter.match, {
+      $facet: {
+        count: [
+          { $group: { _id: null, total: { $sum: 1 } } }
+        ],
+        books: [
+          { $skip: startRow },
+          { $limit: query.limit }
+        ]
+      }
+    }], {
 
-    const totalPages = Math.ceil(books.length / query.limit);
+    })
 
-    const returnBook: IBook[] = books.map((book) => {
+    const books = result[0].books
+    const count = result[0].count[0].total;
+
+    const totalPages = Math.ceil(count / query.limit);
+    const returnBook: IBook[] = books.map((book: IBook) => {
       return {
         _id: book._id,
         title: book.title,
