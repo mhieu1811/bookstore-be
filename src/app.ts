@@ -1,12 +1,10 @@
 import 'reflect-metadata';
 import express, { Express, Response, Request, NextFunction } from 'express';
 import * as env from 'dotenv';
-import { json } from 'body-parser';
 import mongoose, { MongooseOptions } from 'mongoose';
 import cors from 'cors';
 import { BookController } from './controllers';
 import container from './config/inversify.config';
-import BaseError from './utils/errors/base.error';
 import ApiError from './utils/errors/apiError.error';
 import createLogger from './utils/logger';
 import {
@@ -60,7 +58,6 @@ export default class App {
   }
   private initMiddleware() {
     this.app.use(cors());
-    this.app.use(json());
 
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
@@ -87,6 +84,12 @@ export default class App {
       bookController.editBook.bind(bookController),
     );
 
+    this.app.delete(
+      '/api/books/:bookId',
+      checkSchema(getBookDetailValidation),
+      bookController.deleteBook.bind(bookController),
+    );
+
     this.app.get(
       '/api/books',
       checkSchema(bookQuery),
@@ -97,6 +100,7 @@ export default class App {
   private initSwagger() {
     const file = fs.readFileSync('./openapi.yaml', 'utf8');
     const swaggerDocument = YAML.parse(file);
+
     this.app.use(
       '/api-docs',
       swaggerUi.serve,

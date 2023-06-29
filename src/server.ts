@@ -6,7 +6,7 @@ export const start = async () => {
     const app: Express = express();
     const server = new App(app);
     await server.start();
-  } catch (err) {}
+  } catch (err) { }
 };
 
 start();

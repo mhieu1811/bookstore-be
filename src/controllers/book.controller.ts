@@ -33,6 +33,8 @@ export class BookController {
       //validate
       const { bookId } = req.params;
       const book = await this._bookService.getDetail(bookId);
+      if (!book)
+        return res.status(404).json({ message: 'Book not found' });
       return res.status(200).json(book);
     } catch (err) {
       next(err);
@@ -43,10 +45,11 @@ export class BookController {
     try {
       logger.info('Create Book');
       const validationError: Result = await validationResult(req);
-      console.log(validationError.array());
+      console.log(validationError.array())
       if (!validationError.isEmpty()) throw new ApiError(400, 'Bad Request');
       //validate
-      const { book } = req.body;
+      const book = req.body;
+      console.log(book)
       const bookAdd: ICreateBook = {
         title: book.title,
         price: book.price,
@@ -68,10 +71,11 @@ export class BookController {
     try {
       logger.info('Edit Book');
       const validationError: Result = await validationResult(req);
+      console.log(validationError.array())
 
       if (!validationError.isEmpty()) throw new ApiError(400, 'Bad Request');
       //validate
-      const { book } = req.body;
+      const book = req.body;
       const { bookId } = req.params;
 
       const bookEdit: ICreateBook = {
@@ -84,6 +88,23 @@ export class BookController {
         isDeleted: book.isDeleted,
       };
       await this._bookService.editBook(bookId, bookEdit);
+      return res.status(201).json({ message: 'Edit Book Successfully' });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async deleteBook(req: Request, res: Response, next: NextFunction) {
+    try {
+      logger.info('Delete Book');
+      const validationError: Result = await validationResult(req);
+
+      if (!validationError.isEmpty()) throw new ApiError(400, 'Bad Request');
+      //validate
+      const book = req.body;
+      const { bookId } = req.params;
+
+      await this._bookService.deleteBook(bookId);
       return res.status(201).json({ message: 'Edit Book Successfully' });
     } catch (err) {
       next(err);

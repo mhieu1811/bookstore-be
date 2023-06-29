@@ -100,6 +100,28 @@ paths:
           name: bookId
           schema:
             type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Bad Request
+    delete:
+      tags:
+        - Book
+      summary: Delete a  Book
+      description: Delte Book
+      parameters:
+        - in: path
+          name: bookId
+          schema:
+            type: string
       requestBody:
         description: Edit Book
         content:

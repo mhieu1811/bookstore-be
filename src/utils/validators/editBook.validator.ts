@@ -9,38 +9,29 @@ export const editBookValidation: Schema = {
       bail: true,
     },
   },
-  book: {
+  title: {
     notEmpty: true,
     in: ['body'],
   },
-  'book.title': {
+  description: {
     notEmpty: true,
     in: ['body'],
   },
-  'book.description': {
+  image: {
     notEmpty: true,
     in: ['body'],
   },
-  'book.image': {
-    notEmpty: true,
-    in: ['body'],
-  },
-  'book.price': {
+  price: {
     notEmpty: true,
     isNumeric: true,
     in: ['body'],
   },
-  'book.quantity': {
+  quantity: {
     notEmpty: true,
     isNumeric: true,
     in: ['body'],
   },
-  'book.isDeleted': {
-    notEmpty: true,
-    isBoolean: true,
-    in: ['body'],
-  },
-  'book.category': {
+  category: {
     notEmpty: true,
     in: ['body'],
     isIn: {

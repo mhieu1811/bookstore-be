@@ -1,5 +1,5 @@
 import winston from 'winston';
-const { combine, timestamp, label, printf, prettyPrint, simple } =
+const { combine, timestamp, label, printf } =
   winston.format;
 import cliColor from 'cli-color';
 

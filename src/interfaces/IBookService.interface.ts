@@ -7,5 +7,6 @@ export interface IBookService {
   getDetail(bookId: string): Promise<IBook | null>;
   createBook(book: ICreateBook): Promise<IBook | null>;
   editBook(bookId: string, book: ICreateBook): Promise<IBook | null>;
+  deleteBook(bookId: string): Promise<IBook | null>;
   getByPaging(bookQueryCriteria: IBookQuery): Promise<PageModel<IBook>>;
 }

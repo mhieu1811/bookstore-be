@@ -15,7 +15,7 @@ export class BookService implements IBookService {
   }
 
   async getDetail(bookId: string): Promise<IBook | null> {
-    return await Book.findOne({ _id: bookId });
+    return await Book.findOne({ _id: bookId, isDeleted: false });
   }
 
   async createBook(book: ICreateBook): Promise<IBook | null> {
@@ -26,6 +26,10 @@ export class BookService implements IBookService {
     return await Book.findByIdAndUpdate(bookId, book);
   }
 
+  async deleteBook(bookId: string): Promise<IBook | null> {
+    return await Book.findByIdAndUpdate(bookId, { isDeleted: true });
+  }
+
   async getByPaging(bookQueryCriteria: IBookQuery): Promise<PageModel<IBook>> {
     const query = {
       search: bookQueryCriteria.search ?? '',
@@ -34,15 +38,15 @@ export class BookService implements IBookService {
       category: bookQueryCriteria.category ?? '',
     } as IBookQuery;
 
-    console.log(query);
     const bookFilter = await this.filter(query);
-    const paged = await this.paging(query, bookFilter.match);
 
-    const startRow = (await (paged.currentPage - 1)) * paged.pageSize;
+    const startRow = (query.page - 1) * query.limit;
 
     const books = await Book.aggregate([bookFilter.match])
       .skip(startRow)
-      .limit(paged.pageSize);
+      .limit(query.limit);
+
+    const totalPages = Math.ceil(books.length / query.limit);
 
     const returnBook: IBook[] = books.map((book) => {
       return {
@@ -58,10 +62,10 @@ export class BookService implements IBookService {
     });
 
     const PagedResponseModel: PageModel<IBook> = {
-      pageSize: paged.pageSize,
+      pageSize: query.limit,
       totalItems: returnBook.length,
-      totalPages: paged.totalItems,
-      currentPage: paged.currentPage,
+      totalPages: totalPages,
+      currentPage: query.page,
       items: returnBook,
     };
     return PagedResponseModel;
@@ -69,9 +73,11 @@ export class BookService implements IBookService {
 
   async filter(query: IBookQuery): Promise<any> {
     const filter: any = {};
+    filter.isDeleted = false
     if (typeof query.search != 'undefined' && query.search) {
       filter.title = { $regex: query.search, $options: 'i' };
     }
+
 
     if (query.category) {
       filter.category = query.category;
@@ -83,13 +89,15 @@ export class BookService implements IBookService {
     return bookFilter;
   }
 
-  async paging(query: IBookQuery, filter: any): Promise<PageModel<IBook>> {
-    const paged = {} as PageModel<IBook>;
+  // async paging(query: IBookQuery): Promise<PageModel<IBook>> {
+  //   const paged = {} as PageModel<IBook>;
 
-    paged.currentPage = query.page < 0 ? 1 : query.page;
-    paged.pageSize = query.limit || 12;
+  //   paged.currentPage = query.page < 0 ? 1 : query.page;
+  //   paged.pageSize = query.limit || 12;
 
-    paged.totalPages = Math.ceil(paged.totalItems / paged.pageSize);
-    return paged;
-  }
+
+  //   paged.totalPages = Math.ceil(paged.totalItems / paged.pageSize);
+  //   console.log(paged)
+  //   return paged;
+  // }
 }
