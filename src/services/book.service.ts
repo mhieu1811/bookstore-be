@@ -45,7 +45,7 @@ export class BookService implements IBookService {
     const result = await Book.aggregate([bookFilter.match, {
       $facet: {
         count: [
-          { $group: { _id: null, total: { $sum: 1 } } }
+          { $count: 'total' }
         ],
         books: [
           { $skip: startRow },
@@ -56,8 +56,11 @@ export class BookService implements IBookService {
 
     })
 
+    let count: number = 0
+
     const books = result[0].books
-    const count = result[0].count[0].total;
+    if (result[0].count[0])
+      count = result[0].count[0].total;
 
     const totalPages = Math.ceil(count / query.limit);
     const returnBook: IBook[] = books.map((book: IBook) => {
@@ -101,15 +104,4 @@ export class BookService implements IBookService {
     return bookFilter;
   }
 
-  // async paging(query: IBookQuery): Promise<PageModel<IBook>> {
-  //   const paged = {} as PageModel<IBook>;
-
-  //   paged.currentPage = query.page < 0 ? 1 : query.page;
-  //   paged.pageSize = query.limit || 12;
-
-
-  //   paged.totalPages = Math.ceil(paged.totalItems / paged.pageSize);
-  //   console.log(paged)
-  //   return paged;
-  // }
 }
