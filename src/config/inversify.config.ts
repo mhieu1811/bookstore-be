@@ -9,4 +9,5 @@ const container = new Container();
 container.bind<IBookService>(TYPES.Book).to(BookService).inRequestScope();
 
 container.bind<BookController>(BookController).toSelf();
+
 export default container;

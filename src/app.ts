@@ -64,9 +64,8 @@ export default class App {
   }
 
   private initRoute() {
-    const bookController = container.resolve<BookController>(BookController);
+    const bookController = container.get(BookController);
 
-    // this.app.get('/api/books', bookController.getBooks.bind(bookController));
     this.app.get(
       '/api/books/:bookId',
       checkSchema(getBookDetailValidation),

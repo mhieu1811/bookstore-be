@@ -9,15 +9,12 @@ import { Result, validationResult } from 'express-validator';
 const logger = createLogger('Book Controller');
 @injectable()
 export class BookController {
-  private readonly _bookService: IBookService;
-  constructor(@inject(TYPES.Book) bookService: IBookService) {
-    this._bookService = bookService;
-  }
+  constructor(@inject(TYPES.Book) private bookService: IBookService) {}
 
   async getBooks(req: Request, res: Response, next: NextFunction) {
     try {
       logger.info('Get List Book');
-      const books = await this._bookService.getAllBooks();
+      const books = await this.bookService.getAllBooks();
       return res.status(200).json(books);
     } catch (err) {
       next(err);
@@ -32,9 +29,8 @@ export class BookController {
       if (!validationError.isEmpty()) throw new ApiError(400, 'Bad Request');
       //validate
       const { bookId } = req.params;
-      const book = await this._bookService.getDetail(bookId);
-      if (!book)
-        return res.status(404).json({ message: 'Book not found' });
+      const book = await this.bookService.getDetail(bookId);
+      if (!book) return res.status(404).json({ message: 'Book not found' });
       return res.status(200).json(book);
     } catch (err) {
       next(err);
@@ -45,11 +41,9 @@ export class BookController {
     try {
       logger.info('Create Book');
       const validationError: Result = await validationResult(req);
-      console.log(validationError.array())
       if (!validationError.isEmpty()) throw new ApiError(400, 'Bad Request');
       //validate
       const book = req.body;
-      console.log(book)
       const bookAdd: ICreateBook = {
         title: book.title,
         price: book.price,
@@ -60,7 +54,7 @@ export class BookController {
         isDeleted: false,
       };
 
-      await this._bookService.createBook(bookAdd);
+      await this.bookService.createBook(bookAdd);
       return res.status(201).json({ message: 'Add Book Successfully' });
     } catch (err) {
       next(err);
@@ -71,7 +65,6 @@ export class BookController {
     try {
       logger.info('Edit Book');
       const validationError: Result = await validationResult(req);
-      console.log(validationError.array())
 
       if (!validationError.isEmpty()) throw new ApiError(400, 'Bad Request');
       //validate
@@ -87,7 +80,7 @@ export class BookController {
         category: book.category,
         isDeleted: book.isDeleted,
       };
-      await this._bookService.editBook(bookId, bookEdit);
+      await this.bookService.editBook(bookId, bookEdit);
       return res.status(201).json({ message: 'Edit Book Successfully' });
     } catch (err) {
       next(err);
@@ -104,7 +97,7 @@ export class BookController {
       const book = req.body;
       const { bookId } = req.params;
 
-      await this._bookService.deleteBook(bookId);
+      await this.bookService.deleteBook(bookId);
       return res.status(201).json({ message: 'Edit Book Successfully' });
     } catch (err) {
       next(err);
@@ -132,7 +125,7 @@ export class BookController {
 
       // const query: IBookQuery = req.query;
 
-      const books = await this._bookService.getByPaging(query);
+      const books = await this.bookService.getByPaging(query);
       return res.status(201).json(books);
     } catch (err) {
       next(err);

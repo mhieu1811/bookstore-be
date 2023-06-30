@@ -42,25 +42,18 @@ export class BookService implements IBookService {
 
     const startRow = (query.page - 1) * query.limit;
 
-    const result = await Book.aggregate([bookFilter.match, {
-      $facet: {
-        count: [
-          { $count: 'total' }
-        ],
-        books: [
-          { $skip: startRow },
-          { $limit: query.limit }
-        ]
-      }
-    }], {
+    const result = await Book.aggregate([
+      bookFilter.match,
+      {
+        $facet: {
+          count: [{ $count: 'total' }],
+          books: [{ $skip: startRow }, { $limit: query.limit }],
+        },
+      },
+    ]);
 
-    })
-
-    let count: number = 0
-
-    const books = result[0].books
-    if (result[0].count[0])
-      count = result[0].count[0].total;
+    const books = result[0].books;
+    const count = result[0].count[0] ? result[0].count[0].total : 0;
 
     const totalPages = Math.ceil(count / query.limit);
     const returnBook: IBook[] = books.map((book: IBook) => {
@@ -78,7 +71,7 @@ export class BookService implements IBookService {
 
     const PagedResponseModel: PageModel<IBook> = {
       pageSize: query.limit,
-      totalItems: returnBook.length,
+      totalItems: count,
       totalPages: totalPages,
       currentPage: query.page,
       items: returnBook,
@@ -88,11 +81,10 @@ export class BookService implements IBookService {
 
   async filter(query: IBookQuery): Promise<any> {
     const filter: any = {};
-    filter.isDeleted = false
+    filter.isDeleted = false;
     if (typeof query.search != 'undefined' && query.search) {
       filter.title = { $regex: query.search, $options: 'i' };
     }
-
 
     if (query.category) {
       filter.category = query.category;
@@ -103,5 +95,4 @@ export class BookService implements IBookService {
 
     return bookFilter;
   }
-
 }
