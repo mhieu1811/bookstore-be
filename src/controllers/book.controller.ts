@@ -1,7 +1,7 @@
 import { TYPES } from '../config/types';
 import { inject, injectable } from 'inversify';
 import { Response, Request, NextFunction } from 'express';
-import { IBookQuery, IBookService, ICreateBook } from '../interfaces';
+import { IBookService, ICreateBook } from '../interfaces';
 import ApiError from '../utils/errors/apiError.error';
 import createLogger from '../utils/logger';
 import { Result, validationResult } from 'express-validator';
@@ -30,7 +30,7 @@ export class BookController {
       //validate
       const { bookId } = req.params;
       const book = await this.bookService.getDetail(bookId);
-      if (!book) return res.status(404).json({ message: 'Book not found' });
+      if (!book) throw new ApiError(404, 'Book not found');
       return res.status(200).json(book);
     } catch (err) {
       next(err);
@@ -55,7 +55,7 @@ export class BookController {
       };
 
       await this.bookService.createBook(bookAdd);
-      return res.status(201).json({ message: 'Add Book Successfully' });
+      return res.status(200).json({ message: 'Add Book Successfully' });
     } catch (err) {
       next(err);
     }
@@ -80,8 +80,9 @@ export class BookController {
         category: book.category,
         isDeleted: book.isDeleted,
       };
-      await this.bookService.editBook(bookId, bookEdit);
-      return res.status(201).json({ message: 'Edit Book Successfully' });
+      const updateBook = await this.bookService.editBook(bookId, bookEdit);
+      if (!updateBook) throw new ApiError(404, 'Book not found');
+      return res.status(200).json({ message: 'Edit Book Successfully' });
     } catch (err) {
       next(err);
     }
@@ -98,7 +99,7 @@ export class BookController {
       const { bookId } = req.params;
 
       await this.bookService.deleteBook(bookId);
-      return res.status(201).json({ message: 'Edit Book Successfully' });
+      return res.status(200).json({ message: 'Edit Book Successfully' });
     } catch (err) {
       next(err);
     }
@@ -126,7 +127,7 @@ export class BookController {
       // const query: IBookQuery = req.query;
 
       const books = await this.bookService.getByPaging(query);
-      return res.status(201).json(books);
+      return res.status(200).json(books);
     } catch (err) {
       next(err);
     }

@@ -100,6 +100,13 @@ paths:
           name: bookId
           schema:
             type: string
+      requestBody:
+        description: Create a new Book
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatedBook'
+        required: true
       responses:
         '200':
           description: Successful operation

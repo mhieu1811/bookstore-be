@@ -6,7 +6,7 @@ RUN npm ci --only=production
 FROM install as builder
 WORKDIR /app
 COPY . .
-RUN npm run build
+RUN npm install && npm run build
 
 FROM node:18-alpine AS final
 WORKDIR /app
