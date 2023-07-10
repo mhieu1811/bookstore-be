@@ -17,6 +17,7 @@ import { bookQuery } from './utils/validators/bookQuery.validator';
 import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
 import YAML from 'yaml';
+import KafkaService from './utils/kafka/kafka.service';
 
 env.config();
 
@@ -25,7 +26,7 @@ export default class App {
   private readonly port: number;
   private readonly uri: string;
   public app: Express = express();
-
+  private kafka: KafkaService = KafkaService.getInstance();
   constructor(app: Express) {
     this.app = app;
     this.port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -48,6 +49,7 @@ export default class App {
 
   public async start() {
     this.connection();
+    await this.kafka.connect();
     this.initMiddleware();
     this.initSwagger();
     this.initRoute();
