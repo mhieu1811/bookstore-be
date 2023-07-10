@@ -7,9 +7,13 @@ import {
   PageModel,
 } from '../interfaces';
 import Book from '../schemas/book.schema';
+import KafkaService from '../utils/kafka/kafka.service';
+import { KafkaTopics } from '../utils/kafka/topics';
 
 @injectable()
 export class BookService implements IBookService {
+  private kafkaService = KafkaService.getInstance();
+
   async getAllBooks(): Promise<IBook[]> {
     return await Book.find();
   }
@@ -19,7 +23,12 @@ export class BookService implements IBookService {
   }
 
   async createBook(book: ICreateBook): Promise<IBook | null> {
-    return await Book.create(book);
+    const newBook = await Book.create(book);
+    this.kafkaService.sendMessage(KafkaTopics.Book, {
+      book: newBook,
+      type: 'create',
+    });
+    return newBook;
   }
 
   async editBook(bookId: string, book: ICreateBook): Promise<IBook | null> {
