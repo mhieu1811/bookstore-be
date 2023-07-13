@@ -24,8 +24,19 @@ export class BookService implements IBookService {
 
   async createBook(book: ICreateBook): Promise<IBook | null> {
     const newBook = await Book.create(book);
+
+    const bookKafka: IBook = {
+      _id: newBook._id.toString(),
+      title: newBook.title,
+      image: newBook.image,
+      quantity: newBook.quantity,
+      price: newBook.price,
+      description: newBook.description,
+      category: newBook.category,
+      isDeleted: newBook.isDeleted,
+    };
     this.kafkaService.sendMessage(KafkaTopics.Book, {
-      book: newBook,
+      book: bookKafka,
       type: 'create',
     });
     return newBook;
