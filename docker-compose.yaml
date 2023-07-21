@@ -41,3 +41,29 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
+  postgres:
+    image: postgres:latest
+    hostname: postgresql
+    container_name: postgresql
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: password
+
+  # glue_jupyter_lab:
+  #   image: amazon/aws-glue-libs:glue_libs_4.0.0_image_01
+  #   hostname: glue_lab
+  #   container_name: glue_lab
+  #   command: /home/glue_user/jupyter/jupyter_start.sh
+  #   ports:
+  #     - '8888:8888'
+  #     - '8889:8889'
+  #     - '4040:4040'
+  #     - '18080:18080'
+  #   volumes:
+  #     - ${PWD}:/home/glue_user/workspace/
+  #   environment:
+  #     AWS_ACCESS_KEY_ID: AKIAW35NHIMCLFAJE7WE
+  #     AWS_SECRET_ACCESS_KEY: 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
+  #     DISABLE_SSL: 0

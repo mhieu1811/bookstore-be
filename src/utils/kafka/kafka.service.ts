@@ -28,7 +28,7 @@ export default class KafkaService {
     this.registry = new SchemaRegistry({ host: 'http://0.0.0.0:8081' });
     await this.registrySchema();
     await this.producer.connect().then(() => {
-      console.log('producer connected');
+      console.log('Producer connected');
     });
   }
 

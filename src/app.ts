@@ -114,6 +114,7 @@ export default class App {
       (err: Error, req: Request, res: Response, next: NextFunction) => {
         const error = err as ApiError;
         logger.error(error);
+        console.log(error.stack);
         res
           .status(error.statusCode ? error.statusCode : 500)
           .json(error.statusCode ? error.message : 'Internal Server Error');
